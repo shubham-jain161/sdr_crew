@@ -2,15 +2,20 @@ from typing import List, Dict
 from openai import AzureOpenAI
 import os
 import pandas as pd
+import streamlit as st
 
 class LeadResearchAgent:
     def __init__(self):
         """Initialize LeadResearchAgent with Azure OpenAI client"""
-        self.client = AzureOpenAI(
-            api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-            api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
-            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
-        )
+        try:
+            self.client = AzureOpenAI(
+                api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+                api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
+                azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+            )
+        except Exception as e:
+            st.error(f"Azure OpenAI initialization failed: {str(e)}")
+            st.info("Please check your .env file for AZURE_OPENAI_API_KEY, AZURE_OPENAI_API_VERSION, and AZURE_OPENAI_ENDPOINT")
 
     def research_company(self, lead: Dict) -> Dict:
         """Research company using available information and enrich lead data"""
