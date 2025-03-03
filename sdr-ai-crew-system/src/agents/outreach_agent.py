@@ -8,9 +8,13 @@ class OutreachAgent:
     def __init__(self):
         """Initialize OutreachAgent with necessary clients and configurations"""
         self.connection_string = os.getenv("AZURE_COMMUNICATION_CONNECTION_STRING")
+        if not self.connection_string:
+            raise ValueError("AZURE_COMMUNICATION_CONNECTION_STRING not found in environment variables")
+        
         self.email_client = EmailClient.from_connection_string(self.connection_string)
-        self.sender = os.getenv("AZURE_COMMUNICATION_SENDER_EMAIL", 
-                               "DoNotReply@2b711708-b606-48bd-b88c-0897ef049cc5.azurecomm.net")
+        self.sender = os.getenv("AZURE_COMMUNICATION_SENDER_EMAIL")
+        if not self.sender:
+            raise ValueError("AZURE_COMMUNICATION_SENDER_EMAIL not found in environment variables")
         self.client = AzureOpenAI(
             api_key=os.getenv("AZURE_OPENAI_API_KEY"),
             api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
